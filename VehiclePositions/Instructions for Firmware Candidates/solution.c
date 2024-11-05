@@ -23,6 +23,7 @@ typedef struct
     int position;
     double latitude;
     double longitude;
+    int32_t closestId;
     char closestReg[256];
 } Position;
 
@@ -141,6 +142,7 @@ void findClosestRegistrations(Position *positions, int numPositions, VehicleData
 
         if (closestIndex != -1)
         {
+            positions[i].closestId = vehicles[closestIndex].VehicleId;
             strncpy(positions[i].closestReg, vehicles[closestIndex].VehicleRegistration, 255);
             positions[i].closestReg[255] = '\0'; // Ensure null termination
         }
@@ -154,16 +156,16 @@ int main()
 
     // 10 pre-defined co-ordinates or positions
     Position positions[10] = {
-        {1, 34.544909, -102.100843, ""},
-        {2, 32.345544, -99.123124, ""},
-        {3, 33.234235, -100.214124, ""},
-        {4, 35.195739, -95.348899, ""},
-        {5, 31.895839, -97.789573, ""},
-        {6, 32.895839, -101.789573, ""},
-        {7, 34.115839, -100.225732, ""},
-        {8, 32.335839, -99.992232, ""},
-        {9, 33.535339, -94.792232, ""},
-        {10, 32.234235, -100.222222, ""}};
+        {1, 34.544909, -102.100843, 0, ""},
+        {2, 32.345544, -99.123124, 0, ""},
+        {3, 33.234235, -100.214124, 0, ""},
+        {4, 35.195739, -95.348899, 0, ""},
+        {5, 31.895839, -97.789573, 0, ""},
+        {6, 32.895839, -101.789573, 0, ""},
+        {7, 34.115839, -100.225732, 0, ""},
+        {8, 32.335839, -99.992232, 0, ""},
+        {9, 33.535339, -94.792232, 0, ""},
+        {10, 32.234235, -100.222222, 0, ""}};
 
     VehicleData *vehicles;
     size_t numVehicles = read_vehicle_data("../VehiclePositions_DataFile/VehiclePositions.dat", &vehicles);
@@ -178,8 +180,8 @@ int main()
     // Print the results
     for (int i = 0; i < 10; i++)
     {
-        printf("Position %d: Latitude = %f, Longitude = %f, Closest Registration = %s\n",
-               positions[i].position, positions[i].latitude, positions[i].longitude, positions[i].closestReg);
+        printf("Position %d: Latitude = %f, Longitude = %f, Closest ID = %d, Closest Registration = %s\n",
+               positions[i].position, positions[i].latitude, positions[i].longitude, positions[i].closestId, positions[i].closestReg);
     }
 
     // Clean up

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <time.h>
 
 typedef struct
 {
@@ -10,6 +11,13 @@ typedef struct
     float Longitude;
     uint64_t RecordedTimeUTC;
 } VehicleData;
+
+typedef struct {
+    int position;
+    double latitude;
+    double longitude;
+    char closestReg[256];
+} Position;
 
 size_t read_vehicle_data(const char *filename, VehicleData *vehicles, size_t max_entries)
 {
@@ -51,6 +59,9 @@ size_t read_vehicle_data(const char *filename, VehicleData *vehicles, size_t max
 
 int main()
 {
+    // Time execution
+    clock_t start_time = clock();
+
     size_t max_entries = 2000000;
     VehicleData *vehicles = malloc(max_entries * sizeof(VehicleData));
     if (!vehicles)
@@ -67,6 +78,12 @@ int main()
                vehicles[i].VehicleId, vehicles[i].VehicleRegistration, vehicles[i].Latitude, vehicles[i].Longitude, vehicles[i].RecordedTimeUTC);
     }
 
+    // Clean up
     free(vehicles);
+
+    // Print the execution time
+    clock_t end_time = clock();
+    double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC * 1000;
+    printf("Time taken: %f milliseconds\n", time_spent);
     return 0;
 }

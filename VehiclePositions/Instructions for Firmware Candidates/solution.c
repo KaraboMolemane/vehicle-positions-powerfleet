@@ -168,13 +168,18 @@ int main()
         {10, 32.234235, -100.222222, 0, ""}};
 
     VehicleData *vehicles;
+    clock_t start_time_file = clock();
     size_t numVehicles = read_vehicle_data("../VehiclePositions_DataFile/VehiclePositions.dat", &vehicles);
     if (numVehicles == 0)
     {
         return 1;
     }
+    clock_t end_time_file = clock();
+        double time_spent_file = (double)(end_time_file - start_time_file) / CLOCKS_PER_SEC * 1000;
+    printf("File reading execution time time: %f milliseconds\n", time_spent_file);
 
     // Find the closest registrations
+       clock_t start_time_closest = clock();
     findClosestRegistrations(positions, 10, vehicles, numVehicles);
 
     // Print the results
@@ -183,6 +188,9 @@ int main()
         printf("Position %d: Latitude = %f, Longitude = %f, Closest ID = %d, Closest Registration = %s\n",
                positions[i].position, positions[i].latitude, positions[i].longitude, positions[i].closestId, positions[i].closestReg);
     }
+        clock_t end_time_closest = clock();
+        double time_spent_closest = (double)(end_time_closest - start_time_closest) / CLOCKS_PER_SEC * 1000;
+    printf("Finding closest vehicle execution time: %f milliseconds\n", time_spent_closest);
 
     // Clean up
     free(vehicles);
@@ -192,7 +200,7 @@ int main()
 
     // Print the execution time
     double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC * 1000;
-    printf("Time taken: %f milliseconds\n", time_spent);
+    printf("Total execution time: %f milliseconds\n", time_spent);
 
     return 0;
 }

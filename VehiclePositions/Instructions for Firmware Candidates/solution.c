@@ -12,7 +12,7 @@
 typedef struct
 {
     int32_t VehicleId;
-    char VehicleRegistration[256];
+    char VehicleRegistration[256]; // Assuming max length of 256 for simplicity
     float Latitude;
     float Longitude;
     uint64_t RecordedTimeUTC;
@@ -38,6 +38,13 @@ double calculateDistance(double lat1, double lon1, double lat2, double lon2)
     double c = 2 * asin(sqrt(a));
     double R = 6371; // Radius of Earth in kilometers
     return R * c;
+}
+
+int compareLatitude(const void *a, const void *b)
+{
+    VehicleData *vehicleA = (VehicleData *)a;
+    VehicleData *vehicleB = (VehicleData *)b;
+    return (vehicleA->Latitude > vehicleB->Latitude) - (vehicleA->Latitude < vehicleB->Latitude);
 }
 
 size_t read_vehicle_data(const char *filename, VehicleData **vehicles)
@@ -82,12 +89,47 @@ size_t read_vehicle_data(const char *filename, VehicleData **vehicles)
 
 void findClosestRegistrations(Position *positions, int numPositions, VehicleData *vehicles, size_t numVehicles)
 {
+    // Sort vehicles by latitude
+    qsort(vehicles, numVehicles, sizeof(VehicleData), compareLatitude);
+
     for (int i = 0; i < numPositions; i++)
     {
         double minDistance = INFINITY;
         int closestIndex = -1;
 
-        for (size_t j = 0; j < numVehicles; j++)
+        // Perform a binary search to find the closest latitude
+        int left = 0;
+        int right = numVehicles - 1;
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+            double distance = calculateDistance(positions[i].latitude, positions[i].longitude, vehicles[mid].Latitude, vehicles[mid].Longitude);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestIndex = mid;
+            }
+            if (vehicles[mid].Latitude < positions[i].latitude)
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                right = mid - 1;
+            }
+        }
+
+        // Check neighbors around the closest latitude found
+        for (int j = closestIndex - 1; j >= 0 && fabs(vehicles[j].Latitude - positions[i].latitude) < minDistance; j--)
+        {
+            double distance = calculateDistance(positions[i].latitude, positions[i].longitude, vehicles[j].Latitude, vehicles[j].Longitude);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestIndex = j;
+            }
+        }
+        for (int j = closestIndex + 1; j < numVehicles && fabs(vehicles[j].Latitude - positions[i].latitude) < minDistance; j++)
         {
             double distance = calculateDistance(positions[i].latitude, positions[i].longitude, vehicles[j].Latitude, vehicles[j].Longitude);
             if (distance < minDistance)
@@ -109,7 +151,6 @@ int main()
 {
     // Print the start time
     clock_t start_time = clock();
-    printf("Start time: %ld\n", start_time);
 
     // 10 pre-defined co-ordinates or positions
     Position positions[10] = {
@@ -146,7 +187,6 @@ int main()
 
     // Print the end time
     clock_t end_time = clock();
-    printf("End time: %ld\n", end_time);
 
     // Print the execution time
     double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC * 1000;

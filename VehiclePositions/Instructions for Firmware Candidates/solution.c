@@ -24,7 +24,6 @@ typedef struct
     double latitude;
     double longitude;
     int32_t closestId;
-    char closestReg[256];
 } Position;
 
 double calculateDistance(double lat1, double lon1, double lat2, double lon2)
@@ -143,8 +142,6 @@ void findClosestRegistrations(Position *positions, int numPositions, VehicleData
         if (closestIndex != -1)
         {
             positions[i].closestId = vehicles[closestIndex].VehicleId;
-            strncpy(positions[i].closestReg, vehicles[closestIndex].VehicleRegistration, 255);
-            positions[i].closestReg[255] = '\0'; // Ensure null termination
         }
     }
 }
@@ -156,16 +153,16 @@ int main()
 
     // 10 pre-defined co-ordinates or positions
     Position positions[10] = {
-        {1, 34.544909, -102.100843, 0, ""},
-        {2, 32.345544, -99.123124, 0, ""},
-        {3, 33.234235, -100.214124, 0, ""},
-        {4, 35.195739, -95.348899, 0, ""},
-        {5, 31.895839, -97.789573, 0, ""},
-        {6, 32.895839, -101.789573, 0, ""},
-        {7, 34.115839, -100.225732, 0, ""},
-        {8, 32.335839, -99.992232, 0, ""},
-        {9, 33.535339, -94.792232, 0, ""},
-        {10, 32.234235, -100.222222, 0, ""}};
+        {1, 34.544909, -102.100843, 0},
+        {2, 32.345544, -99.123124, 0},
+        {3, 33.234235, -100.214124, 0},
+        {4, 35.195739, -95.348899, 0},
+        {5, 31.895839, -97.789573, 0},
+        {6, 32.895839, -101.789573, 0},
+        {7, 34.115839, -100.225732, 0},
+        {8, 32.335839, -99.992232, 0},
+        {9, 33.535339, -94.792232, 0},
+        {10, 32.234235, -100.222222, 0}};
 
     VehicleData *vehicles;
     clock_t start_time_file = clock();
@@ -175,22 +172,21 @@ int main()
         return 1;
     }
     clock_t end_time_file = clock();
-        double time_spent_file = (double)(end_time_file - start_time_file) / CLOCKS_PER_SEC * 1000;
-    printf("File reading execution time time: %f milliseconds\n", time_spent_file);
+    double time_spent_file = (double)(end_time_file - start_time_file) / CLOCKS_PER_SEC * 1000;
+    printf("File reading execution time: %f milliseconds\n", time_spent_file);
 
     // Find the closest registrations
-       clock_t start_time_closest = clock();
+    clock_t start_time_closest = clock();
     findClosestRegistrations(positions, 10, vehicles, numVehicles);
+    clock_t end_time_closest = clock();
+    double time_spent_closest = (double)(end_time_closest - start_time_closest) / CLOCKS_PER_SEC * 1000;
+    printf("Finding closest vehicle execution time: %f milliseconds\n", time_spent_closest);
 
     // Print the results
     for (int i = 0; i < 10; i++)
     {
-        printf("Position %d: Latitude = %f, Longitude = %f, Closest ID = %d, Closest Registration = %s\n",
-               positions[i].position, positions[i].latitude, positions[i].longitude, positions[i].closestId, positions[i].closestReg);
+        printf("Closest Position ID %d: %d\n", positions[i].position, positions[i].closestId);
     }
-        clock_t end_time_closest = clock();
-        double time_spent_closest = (double)(end_time_closest - start_time_closest) / CLOCKS_PER_SEC * 1000;
-    printf("Finding closest vehicle execution time: %f milliseconds\n", time_spent_closest);
 
     // Clean up
     free(vehicles);

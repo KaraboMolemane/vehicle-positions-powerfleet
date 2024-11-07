@@ -36,7 +36,7 @@ $(TARGET): $(OBJS)
 
 # Rule to clean the build
 clean:
-	@rm -f $(TARGET) $(OBJS)
+	@del -f $(TARGET) $(OBJS)
 
 # Phony targets
 .PHONY: all clean

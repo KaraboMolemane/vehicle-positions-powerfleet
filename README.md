@@ -134,7 +134,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
   
 | Spec | Avarage execution time | Comment |
 |----------|----------|----------|
-| Processor	13th Gen Intel(R) Core(TM) i7-1355U, 1700 Mhz, 10 Core(s), 12 Logical Processor(s) | 360ms | Main dev machine |
+| Processor	13th Gen Intel(R) Core(TM) i7-1355U, 1700 Mhz, 10 Core(s), 12 Logical Processor(s) | 351ms | Main dev machine |
 | Intel(R) Core(TM) i5-8250U CPU @ 1.6GHz, 1800Mhz 4 Core(s), 8 Logical Processor(s) | 390ms |  |
 | Processor	Intel(R) Celeron(R) N4000 CPU @ 1.10GHz, 1101 Mhz, 2 Core(s), 2 Logical Processor(s) | 945ms |  |
 

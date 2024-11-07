@@ -81,7 +81,6 @@ Below is a list of things you need to use the project and how to install them.
     ```sh
     ../vehicle-positions-powerfleet/VehiclePositions/VehiclePositions_DataFile/VehiclePositions.dat
     ```
-  - The back end runs on http://localhost:3000/
 
 - Build the `solution.exe`
   - Open `command prompt` and navigate to the location below
